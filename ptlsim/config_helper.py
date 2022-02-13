@@ -5,12 +5,7 @@
 
 # First check if system has yaml installed then use that
 
-try:
-    import yaml
-except (ImportError, NotImplementedError):
-    import sys
-    sys.path.append("ptlsim/lib/python")
-    import yaml
+import yaml
 
 try:
     from yaml import CLoader as Loader
@@ -119,7 +114,7 @@ def _parse_file(filename,
     _debug("Reading config file %s" % filename)
     try:
         with open(filename, 'r') as fl:
-            for doc in yaml.load_all(fl):
+            for doc in yaml.load_all(fl, Loader=yaml.FullLoader):
                 if doc.get('import') is not None:
                     [_parse_file(_full_filename(filename, import_file), config)
                             for import_file in doc['import']]
@@ -204,6 +199,8 @@ def _get_base_obj(store, base_name):
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        config = parse_config(sys.argv[1], debug=True)
+        config = parse_config(sys.argv[1], debug=False)
     else:
-        config = parse_config(debug=True)
+        config = parse_config(debug=False)
+
+    print(yaml.dump(config))
